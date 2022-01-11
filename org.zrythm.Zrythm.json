@@ -120,17 +120,6 @@
             ]
         },
         {
-            "name": "libcyaml",
-            "buildsystem": "meson",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://git.sr.ht/~alextee/zrythm-libcyaml",
-                    "commit": "8f1bbd1b95869942ebff247c00dd04250c459849"
-                }
-            ]
-        },
-        {
             "name": "libaudec",
             "buildsystem": "meson",
             "sources": [
@@ -142,13 +131,241 @@
             ]
         },
         {
-            "name": "z-lv2",
-            "buildsystem": "meson",
+            "name": "serd",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 ./waf configure --prefix=$FLATPAK_DEST",
+                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
+                "python3 ./waf install"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ardour.org/files/deps/serd-0.30.11-g36f1cecc.tar.bz2",
+                    "sha256": "76afe98511351c3c50010d9f145cfd1f10b54a9565cb7889f0ca5158da806598"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/serd COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/share/man"
+            ]
+        },
+        {
+            "name": "sord",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 ./waf configure --prefix=$FLATPAK_DEST",
+                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
+                "python3 ./waf install"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ardour.org/files/deps/sord-0.16.9-gd2efdb2.tar.bz2",
+                    "sha256": "40168fc08f3b45fe2cc978bf3a2b14607dc8be2c59598bcac1523cbe59b9ba1a"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/sord COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig",
+                "/share/man"
+            ]
+        },
+        {
+            "name": "sratom",
+            "buildsystem": "simple",
+            "build-commands": [
+                "python3 ./waf configure --prefix=$FLATPAK_DEST",
+                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
+                "python3 ./waf install"
+            ],
+            "cleanup": [
+                "/include",
+                "/lib/pkgconfig"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ardour.org/files/deps/sratom-0.6.8-gc46452c.tar.bz2",
+                    "sha256": "9ca25888964d062fe9c7390e23fcb0de215da0f433ce032e8e570ad9bd772ed9"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/sratom COPYING"
+            ]
+        },
+        "shared-modules/linux-audio/lilv.json",
+        {
+            "name": "carla",
+            "buildsystem": "simple",
+            "build-commands": [
+                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=/app install"
+            ],
+            "build-options": {
+                "arch": {
+                    "arm": {
+                        "env": {
+                            "NOOPT": "true"
+                        }
+                    },
+                    "aarch64": {
+                        "env": {
+                            "NOOPT": "true"
+                        }
+                    }
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/falkTX/Carla/archive/v2.4.1.tar.gz",
+                    "sha256": "bbb188a672ea8871b11648d36770ba013497d03407ca9c73ed68429016f7536f"
+                }
+            ]
+        },
+        {
+            "name": "reproc",
+            "buildsystem": "cmake",
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://git.sr.ht/~alextee/z-lv2",
-                    "commit": "aeb61d6fe048c67968abd8fc4458b9c9f9ef0103"
+                    "url": "https://github.com/DaanDeMeyer/reproc",
+                    "commit": "8aea3aef64c37a7ed0db759a7128a80c2540c808"
+                }
+            ]
+        },
+        {
+            "name": "backtrace",
+            "buildsystem": "autotools",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ianlancetaylor/libbacktrace",
+                    "commit": "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a"
+                }
+            ]
+        },
+        {
+            "name": "xxHash",
+            "buildsystem": "simple",
+            "build-commands": [
+                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=/app install"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/Cyan4973/xxHash/",
+                    "commit": "b1a61dff654af43552b5ee05c737b6fd2a0ee14b"
+                }
+            ]
+        },
+        {
+            "name": "vamp-plugin-sdk",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://archive.org/download/vamp-plugin-sdk-2.8.0-source/vamp-plugin-sdk-2.8.0.tar.gz",
+                    "sha256": "dcc96ae894795822398789f251c2c7effa602fc60e9dd6c7a5c5d2e7a513526c"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/vamp-plugin-sdk COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig"
+            ]
+        },
+        {
+            "name": "rubberband",
+            "build-options": {
+                "env": {
+                    "Vamp_CFLAGS": " ",
+                    "Vamp_LIBS": " "
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://code.breakfastquay.com/attachments/download/34/rubberband-1.8.1.tar.bz2",
+                    "sha256": "ff0c63b0b5ce41f937a8a3bc560f27918c5fe0b90c6bc1cb70829b86ada82b75"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/rubberband COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/share/ladspa",
+                "*.a",
+                "*.so"
+            ]
+        },
+        {
+            "name": "libsass",
+            "buildsystem": "meson",
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/libsass.git",
+                    "branch": "meson",
+                    "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
+                }
+            ]
+        },
+        {
+            "name": "sassc",
+            "buildsystem": "meson",
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/sassc.git",
+                    "branch": "meson",
+                    "commit": "82803377c33247265d779af034eceb5949e78354"
+                }
+            ]
+        },
+        {
+            "name": "libyaml",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://pyyaml.org/download/libyaml/yaml-0.2.1.tar.gz",
+                    "md5": "72724b9736923c517e5a8fc6757ef03d"
+                }
+            ]
+        },
+        {
+            "name": "libcyaml",
+            "buildsystem": "simple",
+            "build-commands": [
+                "make PREFIX=/app -j $FLATPAK_BUILDER_N_JOBS",
+                "make PREFIX=/app install"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/tlsa/libcyaml/",
+                    "commit": "5206ecef6fac7fe8e07d66d36403f64ae1012433"
                 }
             ]
         },
@@ -159,8 +376,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/vchernin/zrythm",
-                    "branch": "master"
+                    "url": "https://git.sr.ht/~alextee/zrythm",
+                    "commit": "c3f4efc10cc13e9116715e3e4863d7df6a3e89af"
                 }
             ]
         }
