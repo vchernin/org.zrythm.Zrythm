@@ -1,0 +1,7 @@
+*~
+.flatpak-builder
+build
+gnupg
+repo
+build-dir
+.flatpak
