@@ -1,9 +1,11 @@
 {
     "app-id": "org.zrythm.Zrythm",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "master",
-    "sdk": "org.gnome.Sdk",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.15-21.08",
+    "sdk": "org.kde.Sdk",
     "command": "zrythm",
+    "rename-icon": "zrythm",
+    "copy-icon": true,
     "finish-args": [
         "--share=ipc",
         "--device=dri",
@@ -223,32 +225,118 @@
             ]
         },
         {
-            "name": "libsass",
+            "name": "libadwaita",
             "buildsystem": "meson",
-            "cleanup": [
-                "*"
+            "config-opts": [
+                "-Dintrospection=disabled",
+                "-Dgtk_doc=false",
+                "-Dtests=false",
+                "-Dexamples=false",
+                "-Dvapi=false"
             ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/lazka/libsass.git",
-                    "branch": "meson",
-                    "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita.git",
+                    "tag": "1.0.1",
+                    "commit": "b274a0c32c51a92692e3b282f04e88f033ba73b1"
                 }
-            ]
-        },
-        {
-            "name": "sassc",
-            "buildsystem": "meson",
-            "cleanup": [
-                "*"
             ],
-            "sources": [
+            "cleanup": [
+                "/include",
+                "/lib/pkgconfig"
+            ],
+            "modules": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/lazka/sassc.git",
-                    "branch": "meson",
-                    "commit": "82803377c33247265d779af034eceb5949e78354"
+                    "name": "pango",
+                    "buildsystem": "meson",
+                    "config-opts": [
+                        "-Dtests=false",
+                        "-Dbuild-documentation=false"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/pango.git",
+                            "tag": "1.50.3",
+                            "commit": "26aadb2508f9022cbfc72e73b558c6791f5d46d9"
+                        }
+                    ],
+                    "cleanup": [
+                        "/include",
+                        "/lib/debug"
+                    ]
+                },
+                {
+                    "name": "libsass",
+                    "buildsystem": "meson",
+                    "cleanup": [
+                        "*"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/lazka/libsass.git",
+                            "branch": "meson",
+                            "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
+                        }
+                    ]
+                },
+                {
+                    "name": "sassc",
+                    "buildsystem": "meson",
+                    "cleanup": [
+                        "*"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/lazka/sassc.git",
+                            "branch": "meson",
+                            "commit": "82803377c33247265d779af034eceb5949e78354"
+                        }
+                    ]
+                },
+                {
+                    "name": "graphene",
+                    "buildsystem": "meson",
+                    "builddir": true,
+                    "config-opts": [
+                        "-Dgtk_doc=false",
+                        "-Dgobject_types=true"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://github.com/ebassi/graphene",
+                            "tag": "1.10.6",
+                            "commit": "01c1b63e98c9191093880919fe6a8c4327515756"
+                        }
+                    ]
+                },
+                {
+                    "name": "gtk",
+                    "buildsystem": "meson",
+                    "config-opts": [
+                        "-Dbuild-documentation=false",
+                        "-Dintrospection=disabled",
+                        "-Dgtk_doc=false",
+                        "-Dtests=false",
+                        "-Dexamples=false",
+                        "-Dvapi=false"
+                    ],
+                    "sources": [
+                        {
+                            "type": "git",
+                            "url": "https://gitlab.gnome.org/GNOME/gtk.git",
+                            "tag": "4.6.0",
+                            "commit": "70cb61fb7104c76a15bc6494a10e6ff1d470f6d8"
+                        }
+                    ],
+                    "cleanup": [
+                        "/include",
+                        "/lib/debug"
+                    ]
                 }
             ]
         },
@@ -435,6 +523,72 @@
                     "url": "https://github.com/DaanDeMeyer/reproc",
                     "commit": "8aea3aef64c37a7ed0db759a7128a80c2540c808",
                     "tag": "v14.2.4"
+                }
+            ]
+        },
+        {
+            "name": "extra-cmake-modules",
+            "buildsystem": "cmake-ninja",
+            "cleanup": [
+                "*"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/KDE/extra-cmake-modules/archive/v5.90.0.tar.gz",
+                    "sha256": "d1c4c11848651f1d2ef7baa1ac30b44397a93ca35864395e44a11e6ec753d2fd"
+                }
+            ]
+        },
+        {
+            "name": "python3-lxml",
+            "buildsystem": "simple",
+            "build-commands": [
+                "pip3 install --ignore-installed --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"lxml\""
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "url": "https://files.pythonhosted.org/packages/e5/21/a2e4517e3d216f0051687eea3d3317557bde68736f038a3b105ac3809247/lxml-4.6.3.tar.gz",
+                    "sha256": "39b78571b3b30645ac77b95f7c69d1bffc4cf8c3b157c435a34da72e78c82468"
+                }
+            ]
+        },
+        {
+            "name": "breeze-icons",
+            "builddir": true,
+            "buildsystem": "cmake",
+            "build-options": {
+                "env": {
+                    "CMAKE_PREFIX_PATH": "Qt5"
+                }
+            },
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/KDE/breeze-icons",
+                    "commit": "c8ca52623d49f77fe32dc1bdb400fa16bc4afb06",
+                    "tag": "v5.90.0"
+                }
+            ]
+        },
+        {
+            "name": "gtksourceview",
+            "buildsystem": "meson",
+            "build-options": {
+                "env": {
+                    "LIBRARY_PATH": "/app/lib"
+                }
+            },
+            "config-opts": [
+                "-Dvapi=false",
+                "-Dintrospection=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/gtksourceview/5.2/gtksourceview-5.2.0.tar.xz",
+                    "sha256": "c9b34fa02654f56ce22fa08827d89db4ba81631b2e6d7d31ea65d13c729430e9"
                 }
             ]
         },

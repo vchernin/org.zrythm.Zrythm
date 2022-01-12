@@ -1,18 +1,25 @@
+Note this builds and passes basic smoke runtime tests (as in doesn't immediately crash), but is otherwise completly untested.
+
+Todo
+- audio plugins
+- look for warnings
+- test basic functionality
+- clean up manifest if possible.
+
 Build:
 
-note you need `org.gnome.Platform//master` and `org.gnome.Platform//master` for now.
+1. Clone this 
 
-`flatpak-builder build-dir --user --install org.zrythm.Zrythm.json --force-clean --ccache`
+2.  `flatpak install --user org.kde.Platform//5.15-21.08 org.kde.Sdk//5.15-21.08 -y` (if not already present)
 
-libs I need to link
+Then
 
-/app/lib/libfftw3f.so.3.6.10
-/app/lib/libfftw3f_threads.so.3.6.10
+3. `flatpak-builder build-dir --user --install org.zrythm.Zrythm.json --force-clean --ccache`
 
-probably
-
+4. `flatpak run org.zrythm.Zrythm`
 
 
 
+Random notes:
 
-                    "LDFLAGS": "-L/app/lib -Wl,-z,relro,-z,now -Wl,--as-needed /app/lib/libfftw3f_threads.so /app/lib/libfftw3_threads.so -Wl,-rpath -Wl,/app/lib",
+Sometimes vamp-plugin-sdk complains about the object file, rm .flatpak-builder and build-dir (i.e. reset the cache) to fix it.
