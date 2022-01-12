@@ -1,3 +1,5 @@
+# Zrythm Flatpak
+
 Note this builds and passes basic smoke runtime tests (as in doesn't immediately crash), but is otherwise completly untested.
 
 Todo
@@ -12,7 +14,7 @@ here (in this manifest)
 
 
 upstream:
-- send metainfo file
+- metainfo file
 - ensure settings "manager" permission https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/667#note_787310
 
 
@@ -31,13 +33,7 @@ OR
 4. `flatpak run org.zrythm.Zrythm`
 
 
-Or
-
-Repo build:
-
-flatpak-builder --repo=zrythm --force-clean --user build-dir org.zrythm.Zrythm.json
-
-Limitations:
+## Limitations:
 
 JACK Support
 
