@@ -24,32 +24,6 @@
         "*.la",
         "*.a"
     ],
-    "add-extensions": {
-        "org.freedesktop.LinuxAudio.Plugins": {
-            "directory": "extensions/Plugins",
-            "version": "20.08",
-            "add-ld-path": "lib",
-            "merge-dirs": "lv2",
-            "subdirectories": true,
-            "no-autodownload": true
-        },
-        "org.freedesktop.LinuxAudio.Plugins.LSP": {
-            "directory": "extensions/Plugins/LSP",
-            "version": "20.08",
-            "add-ld-path": "lib",
-            "merge-dirs": "lv2",
-            "autodelete": false,
-            "subdirectories": true
-        },
-        "org.freedesktop.LinuxAudio.Plugins.ZamPlugins": {
-            "directory": "extensions/Plugins/ZamPlugins",
-            "version": "20.08",
-            "add-ld-path": "lib",
-            "merge-dirs": "lv2",
-            "autodelete": false,
-            "subdirectories": true
-        }
-    },
     "modules": [
         "shared-modules/linux-audio/lv2.json",
         {
@@ -234,28 +208,6 @@
             ]
         },
         {
-            "name": "reproc",
-            "buildsystem": "cmake",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/DaanDeMeyer/reproc",
-                    "commit": "8aea3aef64c37a7ed0db759a7128a80c2540c808"
-                }
-            ]
-        },
-        {
-            "name": "backtrace",
-            "buildsystem": "autotools",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://github.com/ianlancetaylor/libbacktrace",
-                    "commit": "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a"
-                }
-            ]
-        },
-        {
             "name": "xxHash",
             "buildsystem": "simple",
             "build-commands": [
@@ -268,50 +220,6 @@
                     "url": "https://github.com/Cyan4973/xxHash/",
                     "commit": "b1a61dff654af43552b5ee05c737b6fd2a0ee14b"
                 }
-            ]
-        },
-        {
-            "name": "vamp-plugin-sdk",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://archive.org/download/vamp-plugin-sdk-2.8.0-source/vamp-plugin-sdk-2.8.0.tar.gz",
-                    "sha256": "dcc96ae894795822398789f251c2c7effa602fc60e9dd6c7a5c5d2e7a513526c"
-                }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/vamp-plugin-sdk COPYING"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig"
-            ]
-        },
-        {
-            "name": "rubberband",
-            "build-options": {
-                "env": {
-                    "Vamp_CFLAGS": " ",
-                    "Vamp_LIBS": " "
-                }
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://code.breakfastquay.com/attachments/download/34/rubberband-1.8.1.tar.bz2",
-                    "sha256": "ff0c63b0b5ce41f937a8a3bc560f27918c5fe0b90c6bc1cb70829b86ada82b75"
-                }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/rubberband COPYING"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/share/ladspa",
-                "*.a",
-                "*.so"
             ]
         },
         {
@@ -370,9 +278,176 @@
             ]
         },
         {
+            "name": "backtrace",
+            "buildsystem": "autotools",
+            "build-options" : {
+                "env": {
+                    "CFLAGS": "-fPIC"
+                }
+            },
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/ianlancetaylor/libbacktrace",
+                    "commit": "d0f5e95a87a4d3e0a1ed6c069b5dae7cbab3ed2a"
+                }
+            ]
+        },
+        {
+            "name": "vamp-plugin-sdk",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://archive.org/download/vamp-plugin-sdk-2.8.0-source/vamp-plugin-sdk-2.8.0.tar.gz",
+                    "sha256": "dcc96ae894795822398789f251c2c7effa602fc60e9dd6c7a5c5d2e7a513526c"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/vamp-plugin-sdk COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/pkgconfig"
+            ]
+        },
+        {
+            "name": "rubberband",
+            "build-options": {
+                "env": {
+                    "Vamp_CFLAGS": " ",
+                    "Vamp_LIBS": " "
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://code.breakfastquay.com/attachments/download/34/rubberband-1.8.1.tar.bz2",
+                    "sha256": "ff0c63b0b5ce41f937a8a3bc560f27918c5fe0b90c6bc1cb70829b86ada82b75"
+                }
+            ],
+            "post-install": [
+                "install -Dm644 -t /app/share/licenses/rubberband COPYING"
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/share/ladspa",
+                "*.a",
+                "*.so"
+            ]
+        },
+        {
+            "name": "fftw3f",
+            "config-opts": [
+                "--enable-threads",
+                "--enable-shared",
+                "--disable-static",
+                "--enable-float"
+            ],
+            "build-options": {
+                "arch": {
+                    "x86_64": {
+                        "config-opts": [
+                            "--enable-sse2",
+                            "--enable-avx",
+                            "--enable-avx-128-fma"
+                        ]
+                    },
+                    "aarch64": {
+                        "config-opts": [
+                            "--enable-neon"
+                        ]
+                    }
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.fftw.org/fftw-3.3.10.tar.gz",
+                    "sha256": "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
+                }
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/cmake",
+                "/lib/pkgconfig",
+                "/share/man",
+                "*.la",
+                "*.so"
+            ]
+        },
+        {
+            "name": "fftw3",
+            "config-opts": [
+                "--enable-threads",
+                "--enable-shared",
+                "--disable-static"
+            ],
+            "build-options": {
+                "arch": {
+                    "x86_64": {
+                        "config-opts": [
+                            "--enable-sse2",
+                            "--enable-avx",
+                            "--enable-avx-128-fma"
+                        ]
+                    },
+                    "aarch64": {
+                        "config-opts": [
+                            "--enable-neon"
+                        ]
+                    }
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.fftw.org/fftw-3.3.10.tar.gz",
+                    "sha256": "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
+                }
+            ],
+            "cleanup": [
+                "/bin",
+                "/include",
+                "/lib/cmake",
+                "/lib/pkgconfig",
+                "/share/man",
+                "*.la",
+                "*.so"
+            ]
+        },
+        {
+            "name": "reproc",
+            "buildsystem": "cmake",
+            "build-options": {
+                "env": {
+                    "BUILD_SHARED_LIBS": "ON",
+                    "REPROC_WARNINGS": "ON",
+                    "REPROC_WARNINGS_AS_ERRORS": "ON",
+                    "CFLAGS": "-fPIC"
+                }
+            },
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/DaanDeMeyer/reproc",
+                    "commit": "8aea3aef64c37a7ed0db759a7128a80c2540c808",
+                    "tag": "v14.2.4"
+                }
+            ]
+        },
+        {
             "name": "zrythm",
             "builddir": true,
             "buildsystem": "meson",
+            "build-options": {
+                "env": {
+                    "LIBRARY_PATH": "/app/lib",
+                    "CFLAGS": "-fPIC"
+                }
+            },
             "sources": [
                 {
                     "type": "git",
