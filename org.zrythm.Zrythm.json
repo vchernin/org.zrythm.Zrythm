@@ -271,7 +271,8 @@
                     ],
                     "cleanup": [
                         "/include",
-                        "/lib/debug"
+                        "/lib/debug",
+                        "/bin/pango-*"
                     ]
                 },
                 {
@@ -342,7 +343,8 @@
                     ],
                     "cleanup": [
                         "/include",
-                        "/lib/debug"
+                        "/lib/debug",
+                        "/bin/gtk4-*"
                     ]
                 }
             ]
