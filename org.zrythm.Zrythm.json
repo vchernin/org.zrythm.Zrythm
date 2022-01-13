@@ -1,8 +1,8 @@
 {
     "app-id": "org.zrythm.Zrythm",
-    "runtime": "org.kde.Platform",
-    "runtime-version": "5.15-21.08",
-    "sdk": "org.kde.Sdk",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "41",
+    "sdk": "org.gnome.Sdk",
     "command": "zrythm",
     "rename-icon": "zrythm",
     "copy-icon": true,
@@ -12,6 +12,8 @@
         "--socket=fallback-x11",
         "--socket=wayland",
         "--socket=pulseaudio",
+        
+        "--share=network",
                 
         "--filesystem=xdg-run/pipewire-0",
         
@@ -78,28 +80,16 @@
         },
         {
             "name": "guile",
-            "buildsystem": "autotools",
-            "config-opts": [
-                "--disable-error-on-warning"
+            "cleanup": [
+                "/bin",
+                "/lib/libguile-3.0.so.1.2.0-gdb.scm"
             ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://ftp.gnu.org/gnu/guile/guile-2.2.4.tar.xz",
-                    "sha256": "d9e8b94af7b206fcf52bec6501b921bd7d0bd7a31fb7e896a35ba8253678e31e"
+                    "url": "https://ftp.gnu.org/gnu/guile/guile-3.0.4.tar.xz",
+                    "sha256": "6b7947dc2e3d115983846a268b8f5753c12fd5547e42fbf2b97d75a3b79f0d31"
                 }
-            ],
-            "cleanup": [
-                "*.a",
-                "*.la",
-                "/bin/guile-config",
-                "/bin/guile-snarf",
-                "/bin/guile-tools",
-                "/include",
-                "/share/info",
-                "/share/man",
-                "/share/aclocal",
-                "/lib/pkgconfig"
             ]
         },
         {
@@ -306,23 +296,6 @@
                     ]
                 },
                 {
-                    "name": "graphene",
-                    "buildsystem": "meson",
-                    "builddir": true,
-                    "config-opts": [
-                        "-Dgtk_doc=false",
-                        "-Dgobject_types=true"
-                    ],
-                    "sources": [
-                        {
-                            "type": "git",
-                            "url": "https://github.com/ebassi/graphene",
-                            "tag": "1.10.6",
-                            "commit": "01c1b63e98c9191093880919fe6a8c4327515756"
-                        }
-                    ]
-                },
-                {
                     "name": "gtk",
                     "buildsystem": "meson",
                     "config-opts": [
@@ -434,87 +407,7 @@
                 "*.so"
             ]
         },
-        {
-            "name": "fftw3f",
-            "config-opts": [
-                "--enable-threads",
-                "--enable-shared",
-                "--disable-static",
-                "--enable-float"
-            ],
-            "build-options": {
-                "arch": {
-                    "x86_64": {
-                        "config-opts": [
-                            "--enable-sse2",
-                            "--enable-avx",
-                            "--enable-avx-128-fma"
-                        ]
-                    },
-                    "aarch64": {
-                        "config-opts": [
-                            "--enable-neon"
-                        ]
-                    }
-                }
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://www.fftw.org/fftw-3.3.10.tar.gz",
-                    "sha256": "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
-                }
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/cmake",
-                "/lib/pkgconfig",
-                "/share/man",
-                "*.la",
-                "*.so"
-            ]
-        },
-        {
-            "name": "fftw3",
-            "config-opts": [
-                "--enable-threads",
-                "--enable-shared",
-                "--disable-static"
-            ],
-            "build-options": {
-                "arch": {
-                    "x86_64": {
-                        "config-opts": [
-                            "--enable-sse2",
-                            "--enable-avx",
-                            "--enable-avx-128-fma"
-                        ]
-                    },
-                    "aarch64": {
-                        "config-opts": [
-                            "--enable-neon"
-                        ]
-                    }
-                }
-            },
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://www.fftw.org/fftw-3.3.10.tar.gz",
-                    "sha256": "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
-                }
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/cmake",
-                "/lib/pkgconfig",
-                "/share/man",
-                "*.la",
-                "*.so"
-            ]
-        },
+        "shared-modules/linux-audio/fftw3f.json",
         {
             "name": "reproc",
             "buildsystem": "cmake",
@@ -566,12 +459,11 @@
         {
             "name": "breeze-icons",
             "builddir": true,
-            "buildsystem": "cmake",
-            "build-options": {
-                "env": {
-                    "CMAKE_PREFIX_PATH": "Qt5"
-                }
-            },
+            "buildsystem": "simple",
+            "build-commands": [
+                "mkdir -p /app/share/icons/breeze-dark",
+                "cp -r icons-dark/* /app/share/icons/breeze-dark"
+            ],
             "sources": [
                 {
                     "type": "git",
@@ -606,6 +498,9 @@
             "name": "zrythm",
             "builddir": true,
             "buildsystem": "meson",
+            "config-opts": [
+                "-Dfor_flathub=true"
+            ],
             "build-options": {
                 "env": {
                     "LIBRARY_PATH": "/app/lib",
@@ -616,7 +511,7 @@
                 {
                     "type": "git",
                     "url": "https://git.sr.ht/~alextee/zrythm",
-                    "commit": "c3f4efc10cc13e9116715e3e4863d7df6a3e89af"
+                    "commit": "90034e05f1288bbd52053c992b3125917c15159b"
                 }
             ]
         }

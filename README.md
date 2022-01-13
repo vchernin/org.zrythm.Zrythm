@@ -9,26 +9,23 @@ here (in this manifest)
 - look for warnings
 - test basic functionality
 - clean up manifest if possible.
-- Use guile 3, don't need to cleanup (but flathub build will show donation prompt)
-- get icons dark only from https://github.com/KDE/breeze-icons, don't cmake it
 
 
 upstream:
-- metainfo file
 - ensure settings "manager" permission https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/667#note_787310
-
+  - (probably won't need since only using jack, not pipewire's api)
 
 Build:
 
 1. `git clone https://github.com/vchernin/org.zrythm.Zrythm`
 
-2.  `flatpak install --user org.kde.Platform//5.15-21.08 org.kde.Sdk//5.15-21.08 -y` (if not already present)
+2.  `flatpak install --user org.gnome.Platform//41 org.gnome.Sdk//41 -y` (if not already present)
 
 3. `flatpak-builder build-dir --user --install org.zrythm.Zrythm.json --force-clean --ccache`
-OR
-3. `flatpak-builder --repo=zrythm --force-clean --user build-dir org.zrythm.Zrythm.json`
-`flatpak remote-add --user zrythm zrythm --no-gpg-verify`
-`flatpak install --user zrythm org.zrythm.Zrythm`
+OR  
+3. `flatpak-builder --repo=zrythm --force-clean --user build-dir org.zrythm.Zrythm.json`  
+`flatpak remote-add --user zrythm zrythm --no-gpg-verify`  
+`flatpak install --user zrythm org.zrythm.Zrythm`  
 
 4. `flatpak run org.zrythm.Zrythm`
 
