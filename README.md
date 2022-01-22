@@ -1,19 +1,26 @@
 # Zrythm Flatpak
 
-Note this builds and passes basic smoke runtime tests (as in doesn't immediately crash), but is otherwise completly untested.
+Flatpak build of [Zrythm](https://www.zrythm.org), a highly automated and intuitive digital audio workstation.
+
+## Plugins
+
+This package Flatpak builds of LV2  LV2, LADSPA, DSSI and Linux VST/VST3 plugins. Plugins not installed as Flatpak cannot be used.
+
+## JACK Support
+
+You need to install `pipewire-jack-audio-connection-kit` (included in Fedora) or `pipewire-jack` (Arch) which replaces JACK with the PipeWire implementation of JACK. Using normal JACK (i.e no PipeWire) is not supported.
+
+## Memory Locking
+At runtime you might be warned about memory locking. Memory locking priviliges are useful for reliable, dropout-free operation. This is not specific to Flatpak.
+
+You can follow [the guide listed in the Zrythm docs](https://manual.zrythm.org/en/getting-started/system-requirements.html#gnu-linux).
 
 Todo
-here (in this manifest)
-- Give permissions for [Memory Locking](https://manual.zrythm.org/en/getting-started/system-requirements.html#memory-locking) (needed for reliable operation, but maybe not the case with PipeWire).
-- audio plugins
-- look for warnings
-- test basic functionality
-- clean up manifest if possible.
+- test basic functionality, maybe try https://manual.zrythm.org/en/getting-started/running-zrythm.html#first-run-wizard, and audio plugins
+- decide on x-checker-data
+make nightly? make follow tags? (requires custom regex).
 
-
-upstream:
-- ensure settings "manager" permission https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/667#note_787310
-  - (probably won't need since only using jack, not pipewire's api)
+Maintainer notes:
 
 Build:
 
@@ -29,13 +36,7 @@ OR
 
 4. `flatpak run org.zrythm.Zrythm`
 
+When building with ccache, sometimes vamp-plugin-sdk complains about the object file, rm .flatpak-builder and build-dir (i.e. reset the cache) to fix it.
 
-## Limitations:
-
-JACK Support
-
-You need to install `pipewire-jack-audio-connection-kit` which replaces JACK with the PipeWire implementation of JACK. Using normal JACK is not supported.
-
-Random notes:
-
-Sometimes vamp-plugin-sdk complains about the object file, rm .flatpak-builder and build-dir (i.e. reset the cache) to fix it.
+When upstream uses native PipeWire API (not PipeWire-JACK) will need:
+- ensure settings "manager" permission https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/667#note_787310

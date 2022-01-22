@@ -11,19 +11,35 @@
         "--device=dri",
         "--socket=fallback-x11",
         "--socket=wayland",
-        "--socket=pulseaudio",
         
+        /* Built in update checker */
         "--share=network",
-                
+        
+        /* Pulse + ALSA */
+        "--socket=pulseaudio",
+        "--device=all",
+        
+        /* PipeWire + JACK */
         "--filesystem=xdg-run/pipewire-0",
-        
         "--system-talk-name=org.freedesktop.RealtimeKit1",
-        "--socket=system-bus",
         
-        
+        /* Flatpak audio plugins */
+        "--env=LXVST_PATH=/app/extensions/Plugins/lxvst",
+        "--env=VST3_PATH=/app/extensions/Plugins/vst3",
+        "--env=LADSPA_PATH=/app/extensions/Plugins/ladspa:/app/lib/ladspa",
         "--env=LV2_PATH=/app/lib/lv2:/app/extensions/Plugins/lv2"
         
     ],
+    "add-extensions": {
+        "org.freedesktop.LinuxAudio.Plugins": {
+            "directory": "extensions/Plugins",
+            "version": "21.08",
+            "add-ld-path": "lib",
+            "merge-dirs": "ladspa;lv2;lxvst;vst3",
+            "subdirectories": true,
+            "no-autodownload": true
+        }
+    },
     "cleanup": [
         "/include",
         "/lib/pkgconfig",
@@ -37,6 +53,9 @@
     ],
     "modules": [
         "shared-modules/linux-audio/lv2.json",
+        "shared-modules/linux-audio/lilv.json",
+        "shared-modules/linux-audio/fftw3f.json",
+        "shared-modules/linux-audio/jack2.json",
         {
             "name": "libatomic_ops",
             "buildsystem": "autotools",
@@ -103,80 +122,6 @@
                 }
             ]
         },
-        {
-            "name": "serd",
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 ./waf configure --prefix=$FLATPAK_DEST",
-                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
-                "python3 ./waf install"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://ardour.org/files/deps/serd-0.30.11-g36f1cecc.tar.bz2",
-                    "sha256": "76afe98511351c3c50010d9f145cfd1f10b54a9565cb7889f0ca5158da806598"
-                }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/serd COPYING"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/share/man"
-            ]
-        },
-        {
-            "name": "sord",
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 ./waf configure --prefix=$FLATPAK_DEST",
-                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
-                "python3 ./waf install"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://ardour.org/files/deps/sord-0.16.9-gd2efdb2.tar.bz2",
-                    "sha256": "40168fc08f3b45fe2cc978bf3a2b14607dc8be2c59598bcac1523cbe59b9ba1a"
-                }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/sord COPYING"
-            ],
-            "cleanup": [
-                "/bin",
-                "/include",
-                "/lib/pkgconfig",
-                "/share/man"
-            ]
-        },
-        {
-            "name": "sratom",
-            "buildsystem": "simple",
-            "build-commands": [
-                "python3 ./waf configure --prefix=$FLATPAK_DEST",
-                "python3 ./waf build -j $FLATPAK_BUILDER_N_JOBS",
-                "python3 ./waf install"
-            ],
-            "cleanup": [
-                "/include",
-                "/lib/pkgconfig"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "http://ardour.org/files/deps/sratom-0.6.8-gc46452c.tar.bz2",
-                    "sha256": "9ca25888964d062fe9c7390e23fcb0de215da0f433ce032e8e570ad9bd772ed9"
-                }
-            ],
-            "post-install": [
-                "install -Dm644 -t /app/share/licenses/sratom COPYING"
-            ]
-        },
-        "shared-modules/linux-audio/lilv.json",
         {
             "name": "carla",
             "buildsystem": "simple",
@@ -319,6 +264,26 @@
                         "/lib/debug",
                         "/bin/gtk4-*"
                     ]
+                },
+                {
+                    "name": "gtksourceview",
+                    "buildsystem": "meson",
+                    "build-options": {
+                        "env": {
+                            "LIBRARY_PATH": "/app/lib"
+                        }
+                    },
+                    "config-opts": [
+                        "-Dvapi=false",
+                        "-Dintrospection=disabled"
+                    ],
+                    "sources": [
+                        {
+                            "type": "archive",
+                            "url": "https://download.gnome.org/sources/gtksourceview/5.2/gtksourceview-5.2.0.tar.xz",
+                            "sha256": "c9b34fa02654f56ce22fa08827d89db4ba81631b2e6d7d31ea65d13c729430e9"
+                        }
+                    ]
                 }
             ]
         },
@@ -328,7 +293,7 @@
                 {
                     "type": "archive",
                     "url": "https://pyyaml.org/download/libyaml/yaml-0.2.1.tar.gz",
-                    "md5": "72724b9736923c517e5a8fc6757ef03d"
+                    "sha256": "78281145641a080fb32d6e7a87b9c0664d611dcb4d542e90baf731f51cbb59cd"
                 }
             ]
         },
@@ -343,7 +308,8 @@
                 {
                     "type": "git",
                     "url": "https://github.com/tlsa/libcyaml/",
-                    "commit": "5206ecef6fac7fe8e07d66d36403f64ae1012433"
+                    "commit": "499d1e990869455de30a706eb2ee6a2ad60900ab",
+                    "tag": "v1.3.0"
                 }
             ]
         },
@@ -407,7 +373,6 @@
                 "*.so"
             ]
         },
-        "shared-modules/linux-audio/fftw3f.json",
         {
             "name": "reproc",
             "buildsystem": "cmake",
@@ -429,34 +394,6 @@
             ]
         },
         {
-            "name": "extra-cmake-modules",
-            "buildsystem": "cmake-ninja",
-            "cleanup": [
-                "*"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/KDE/extra-cmake-modules/archive/v5.90.0.tar.gz",
-                    "sha256": "d1c4c11848651f1d2ef7baa1ac30b44397a93ca35864395e44a11e6ec753d2fd"
-                }
-            ]
-        },
-        {
-            "name": "python3-lxml",
-            "buildsystem": "simple",
-            "build-commands": [
-                "pip3 install --ignore-installed --exists-action=i --no-index --find-links=\"file://${PWD}\" --prefix=${FLATPAK_DEST} \"lxml\""
-            ],
-            "sources": [
-                {
-                    "type": "file",
-                    "url": "https://files.pythonhosted.org/packages/e5/21/a2e4517e3d216f0051687eea3d3317557bde68736f038a3b105ac3809247/lxml-4.6.3.tar.gz",
-                    "sha256": "39b78571b3b30645ac77b95f7c69d1bffc4cf8c3b157c435a34da72e78c82468"
-                }
-            ]
-        },
-        {
             "name": "breeze-icons",
             "builddir": true,
             "buildsystem": "simple",
@@ -474,27 +411,6 @@
             ]
         },
         {
-            "name": "gtksourceview",
-            "buildsystem": "meson",
-            "build-options": {
-                "env": {
-                    "LIBRARY_PATH": "/app/lib"
-                }
-            },
-            "config-opts": [
-                "-Dvapi=false",
-                "-Dintrospection=disabled"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://download.gnome.org/sources/gtksourceview/5.2/gtksourceview-5.2.0.tar.xz",
-                    "sha256": "c9b34fa02654f56ce22fa08827d89db4ba81631b2e6d7d31ea65d13c729430e9"
-                }
-            ]
-        },
-        "shared-modules/linux-audio/jack2.json",
-        {
             "name": "zrythm",
             "builddir": true,
             "buildsystem": "meson",
@@ -503,15 +419,15 @@
             ],
             "build-options": {
                 "env": {
-                    "LIBRARY_PATH": "/app/lib",
-                    "CFLAGS": "-fPIC"
+                    "LIBRARY_PATH": "/app/lib"
                 }
             },
             "sources": [
                 {
                     "type": "git",
                     "url": "https://git.sr.ht/~alextee/zrythm",
-                    "commit": "90034e05f1288bbd52053c992b3125917c15159b"
+                    "commit": "957346d7bfb18a93f4a7225a0df2d64ca65977ad",
+                    "tag": "v1.0.0-alpha.28.0.1"
                 }
             ]
         }
