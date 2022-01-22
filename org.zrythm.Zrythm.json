@@ -409,7 +409,7 @@
                     "tag": "v5.90.0"
                 }
             ]
-        },
+        }, /* todo comments need to be double slash for f-e-d-c */
         {
             "name": "zrythm",
             "builddir": true,
@@ -427,7 +427,11 @@
                     "type": "git",
                     "url": "https://git.sr.ht/~alextee/zrythm",
                     "commit": "957346d7bfb18a93f4a7225a0df2d64ca65977ad",
-                    "tag": "v1.0.0-alpha.28.0.1"
+                    "tag": "v1.0.0-alpha.28.0.1",
+                    "x-checker-data": {
+                        "type": "git",
+                        "tag-pattern": "^v(.*[\\d.]+)$"
+                    }
                 }
             ]
         }

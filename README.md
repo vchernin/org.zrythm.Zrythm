@@ -17,8 +17,6 @@ You can follow [the guide listed in the Zrythm docs](https://manual.zrythm.org/e
 
 Todo
 - test basic functionality, maybe try https://manual.zrythm.org/en/getting-started/running-zrythm.html#first-run-wizard, and audio plugins
-- decide on x-checker-data
-make nightly? make follow tags? (requires custom regex).
 
 Maintainer notes:
 
